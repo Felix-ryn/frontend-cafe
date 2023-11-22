@@ -53,7 +53,7 @@ export default function DataTransaksi() {
                 return tgl_transaksi.toDateString() === date.toDateString();
             });
             setFilteredTransaksi(filteredData);
-            setFilterMonthly(false); // Reset filter monthly
+            setFilterMonthly(null); // Reset filter monthly
         }
     };
 
@@ -66,6 +66,7 @@ export default function DataTransaksi() {
                     tgl_transaksi.getFullYear() === selectedMonth.getFullYear();
             });
             setFilteredTransaksi(filteredData);
+            setSelectedDate(null)
             setFilterMonthly(true); // Set filter monthly active
             setFilteredMonth(date); // Save filtered month
         }
@@ -73,18 +74,14 @@ export default function DataTransaksi() {
 
     const filterByKasir = (kasirName) => {
         if (kasirName === "Pilih Kasir") {
-            resetFilters(); // Mengatur ulang filter saat memilih "Pilih Kasir"
+            setKasirFilter(null)
         } else {
             const filteredData = transaksi.filter((t) => {
                 return t.user.nama_user === kasirName;
             });
             setFilteredTransaksi(filteredData);
-            setSelectedDate(null);
             setKasirFilter(kasirName);
 
-             if (filterMonthly) {
-            setFilterMonthly(true);
-        }
         }
     };
 
@@ -171,7 +168,7 @@ export default function DataTransaksi() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 border-t border-gray-100">
-                        {selectedDate === null || selectedDate === undefined ? (
+                        {filteredTransaksi === null ? (
                             <>
                                 {transaksi.map((transaksi) => (
                                     <tr key={transaksi.id} className="hover:bg-gray-50">

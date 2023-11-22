@@ -86,20 +86,21 @@ export default function Riwayat() {
     }
   };
 
-  const handleSearch = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/transaksi/findby",
-        { keyword },
-        { headers }
-      );
-      const data = await response.data.data;
-      setFilteredName(data);
-      console.log(filteredName);
-    } catch (error) {
-      console.error("Error:", error);
+  const handleSearch = (e) => {
+    const inputKeyword = e.target.value;
+    setKeyword(inputKeyword);
+
+    const filteredData = transaksi.filter((item) =>
+      item.nama_pelanggan.toLowerCase().includes(inputKeyword.toLowerCase())
+    );
+
+    if (filteredData.length === 0) {
+      setFilteredName(null)
+    } else {
+      setFilteredName(filteredData);
     }
   };
+
 
   const handleCetakNota = (transaksi) => {
     setSelectedTransaksi(transaksi);
@@ -107,22 +108,8 @@ export default function Riwayat() {
   };
 
   return (
-    <div>
-      <div className="flex p-2 ml-5 bg-gray-100 rounded-md border shadow-sm">
-        <input
-          type="text"
-          value={keyword}
-          className="pl-1 bg-gray-100"
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder="Search keyword"
-        />
-        <button
-          className="ml-2 bg-cyan-100 p-1 rounded-md"
-          onClick={handleSearch}
-        >
-          Search
-        </button>
-      </div>
+    
+    
       <div className="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
         <table className="w-full border-collapse bg-white text-left text-sm text-gray-500">
           <thead className="bg-gray-50">
@@ -149,7 +136,7 @@ export default function Riwayat() {
             {filteredName && filteredName.length > 0
               ? filteredName.map((transaksi) => (
                 <tr key={transaksi.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">{transaksi.nama_user}</td>
+                  <td className="px-6 py-4">{transaksi.nama_pelanggan}</td>
                   <td className="px-6 py-4">
                     Meja nomor {transaksi.id_meja}
                   </td>
@@ -187,7 +174,7 @@ export default function Riwayat() {
               ))
               : transaksi.map((transaksi) => (
                 <tr key={transaksi.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">{transaksi.nama_user}</td>
+                  <td className="px-6 py-4">{transaksi.nama_pelanggan}</td>
                   <td className="px-6 py-4">
                     Meja nomor {transaksi.meja.nomor_meja}
                   </td>
@@ -214,7 +201,9 @@ export default function Riwayat() {
                     )}
                   </td>
                   <td>
-                  <NotaPDF transaksi={transaksi} />
+                    {transaksi.status === "lunas" ? (
+                      <NotaPDF transaksi={transaksi} />
+                    ) : null}
                   </td>
                   {/* <td className="px-6 py-4">
                     {transaksi.status === "lunas" && !showNota ? (
@@ -241,6 +230,6 @@ export default function Riwayat() {
         </table>
       </div>
 
-    </div>
+    
   );
 }

@@ -70,7 +70,8 @@ export default function Pemesanan() {
 
     function handleDecreaseClick(id_menu) {
         setIdMenu(id_menu)
-        setMenu(menu.map(menu => {
+        setMenu(
+            menu.map(menu => {
             if (menu.id === id_menu) {
                 if (menu.qty <= 0) {
                     return menu
@@ -84,17 +85,19 @@ export default function Pemesanan() {
     }
 
     const checkPemesanan = () => {
-        var pesanan = menu.filter(x => x.qty > 0)
-        setPesanan(pesanan)
-
-        setDetailTransaksi(pesanan.map(detail => {
-            const { id_menu, harga, qty } = detail;
+        var pesanan = menu.filter((x) => x.qty > 0);
+        setPesanan(pesanan);
+    
+        setDetailTransaksi(
+          pesanan.map((detail) => {
+            const { id, harga, qty } = detail;
             return {
-                id_menu,
-                qty,
-                subtotal: harga * qty
+              id_menu:id,
+              qty,
+              subtotal: harga * qty,
             };
-        }))
+          })
+        );
 
         if (selectedOption === undefined) {
             toast.info("Pilih nomor meja")
@@ -106,9 +109,12 @@ export default function Pemesanan() {
 
 
     const removePesanan = (id_menu) => {
-        setPesanan(pesanan.filter(pesanan => {
-            return pesanan.id_menu !== id_menu
-        }))
+        setIdMenu(id_menu);
+        setPesanan(
+          pesanan.filter((pesanan) => {
+            return pesanan.id !== id_menu;
+          })
+        );
 
         setMenu(menu.map(menu => {
             if (menu.id === id_menu) {
@@ -134,7 +140,7 @@ export default function Pemesanan() {
             id_user: sessionStorage.getItem("id_user"),
             tgl_transaksi: new Date(),
             id_meja: selectedOption.id,
-            nama_user: namaPelanggan,
+            nama_pelanggan: namaPelanggan,
             status: "belum_bayar",
             total: totalPrice,
             qty: totalQty,
@@ -146,12 +152,12 @@ export default function Pemesanan() {
 
         const updatedStatusMeja = {
             ...selectedOption,
-            status: "tidak_tersedia"
+            status: "tidak tersedia"
         }
 
         try {
             await axios.post("http://localhost:8080/transaksi/add", data_transaksi, {headers});
-            await axios.put("http://localhost:8080/meja/" + selectedOption.id_meja, updatedStatusMeja, {headers})
+            await axios.put("http://localhost:8080/meja/" + selectedOption.id, updatedStatusMeja, {headers})
             navigate('/riwayat')
         } catch (error) {
             console.error(error);
@@ -165,9 +171,9 @@ export default function Pemesanan() {
                     <option value="">Pilih meja pelanggan</option>
                     {meja.map((option) => (
                         <option
-                            key={option.id_meja}
+                            key={option.id}
                             value={option.nomor_meja}
-                            disabled={option.status === "tidak_tersedia"}
+                            disabled={option.status === "tidak tersedia"}
                         >
                             Meja nomor {option.nomor_meja}
                         </option>
